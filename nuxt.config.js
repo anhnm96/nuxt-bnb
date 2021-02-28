@@ -17,6 +17,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    '~/assets/sass/app.scss'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -46,5 +47,17 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    postcss: {
+      preset: {
+        features: {
+          // Fixes: https://github.com/tailwindcss/tailwindcss/issues/1190#issuecomment-546621554
+          'focus-within-pseudo-class': false
+        }
+      }
+    },
+    extractCSS: true,
+    loaders: {
+      limit: 0
+    }
   }
 }
