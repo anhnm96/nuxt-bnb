@@ -20,15 +20,13 @@ Deep dive into some of the most ignored problems your app will face in productio
 - Nuxt.js will automagically prefetch the code-splitted pages linked with `<nuxt-link>` when visible in the viewport [by default](https://nuxtjs.org/blog/introducing-smart-prefetching). We can use `no-prefetch` on `<nuxt-link>` or globaly disable it `router: {prefetchLinks: false}` in `nuxt.config.js` to prevent it.
 
 ## Modules
-- Modules are in the node evironment so the aren't compiled by webpack
+- Modules are in the node evironment so they aren't compiled by webpack
 - [Modules](https://nuxtjs.org/docs/2.x/directory-structure/modules/)
 - [Module Container](https://nuxtjs.org/docs/2.x/internals-glossary/internals-module-container)
 
 ## [Nuxt Hooks](https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-hooks)
 
 ## [Google api](https://console.cloud.google.com)
-- Map Javascript API
-- Places API
 - `defer` download script asynchronously then executed whenever it's ready. All scripts with `defer` are guaranteed to execute in the order they appear. Meanwhile `Nuxt` also uses `defer` on all of `Nuxt's javascript` and put it at bottom of the page. So if we use `defer` to load Google Maps in `<head>` the browser have to wait for the Google Maps to download before it could even start up `Nuxt` and hooks like created, mounted... It's not good for mobile or slow network. That's why we should use `async` here.
 - When using third party libraries not supported SSR natively, `script` in `head()` is being appended to the page as many times as the component was loaded. Remember to use `skip` in head.
 - [Place autocomplete](https://developers.google.com/maps/documentation/javascript/places-autocomplete)
@@ -36,7 +34,7 @@ Deep dive into some of the most ignored problems your app will face in productio
 - [Style Reference](https://developers.google.com/maps/documentation/javascript/style-reference?hl=en)
 
 ## Algolia
-- Config `facet` for referncing property
+- Config `facet` for referencing property
 - `attributesToHighlight: []` to reduce payload
 - Algolia search [aroundLatLng](https://www.algolia.com/doc/api-reference/api-parameters/aroundLatLng/?client=javascript)
 
@@ -49,9 +47,12 @@ Deep dive into some of the most ignored problems your app will face in productio
 - [In-Component Guards](https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guards)
 
 ## Images optimizing
-- By default `Nuxt` inline svg image as `base64`. This not only increases the DOM size but also stops you from lazy loading image. It also prevents you from setting the cache lifetime of this asset.
-- Set `extractCSS: true` in `nuxt.config.js` to tells `webpack` not to inline all of the CSS but to keep it as a separate CSS file. `loaders: {limit: 0}` means only zero bytes will be inlined. [See doc](https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-build#extractcss)
+- By default `Nuxt` will use `Base64` to inline images in the asset folder if they are under 1000 bytes. This not only increases the DOM size but also stops you from lazy loading image. It also prevents you from setting the cache lifetime of this asset.
+- Set `extractCSS: true` in `nuxt.config.js` to tells `webpack` not to inline all of the CSS but to keep it as a separate CSS file. [See doc](https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-build#extractcss)
+- `loaders: {limit: 0}` means only file zero bytes will be inlined.
 
+## [Runtime Config](https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#runtimeconfig)
+- If we build the app and then update the .env file, the new value is still shown. This is really handy in production because it allows you to have different configs and still use the same build across different evironments. You also can push this even further and create realtime configs using some timers and a module you can actually `update configs` in realtime while the server container is still running! (turn features on & off, update themes, hours of operation,.. without rebuilding)
 ## Build Setup
 
 ```bash
