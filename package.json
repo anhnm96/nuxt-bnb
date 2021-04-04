@@ -12,7 +12,10 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.12.5",
+    "cookie": "^0.4.1",
     "core-js": "^3.8.3",
+    "google-auth-library": "^7.0.3",
+    "js-cookie": "^2.2.1",
     "nuxt": "^2.15.4"
   },
   "devDependencies": {

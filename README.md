@@ -14,7 +14,7 @@ Deep dive into some of the most ignored problems your app will face in productio
 
 ## [head()](https://vue-meta.nuxtjs.org/api/)
 - To avoid any duplication when used in child components, please give a unique identifier with the hid key to the meta description. This way vue-meta will know that it has to [overwrite the default tag](https://nuxtjs.org/docs/2.x/features/meta-tags-seo#local-settings).
-- `titleTemplate` for dynamic title 
+- `titleTemplate: NuxtBnb | %s` and set `head() {title: PAGE_TITLE}` in page routes for dynamic title 
 
 ## [nuxt-link](https://nuxtjs.org/docs/2.x/features/nuxt-components#the-nuxtlink-component)
 - Nuxt.js will automagically prefetch the code-splitted pages linked with `<nuxt-link>` when visible in the viewport [by default](https://nuxtjs.org/blog/introducing-smart-prefetching). We can use `no-prefetch` on `<nuxt-link>` or globaly disable it `router: {prefetchLinks: false}` in `nuxt.config.js` to prevent it.
@@ -38,8 +38,9 @@ Deep dive into some of the most ignored problems your app will face in productio
 - `attributesToHighlight: []` to reduce payload
 - Algolia search [aroundLatLng](https://www.algolia.com/doc/api-reference/api-parameters/aroundLatLng/?client=javascript)
 
+
 ## Lifecyle hooks
-- `created` runs on bot server and client
+- `created` runs on both server and client
 - `mounted` runs on client only
 
 ## Route update
@@ -52,7 +53,33 @@ Deep dive into some of the most ignored problems your app will face in productio
 - `loaders: {limit: 0}` means only file zero bytes will be inlined.
 
 ## [Runtime Config](https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#runtimeconfig)
-- If we build the app and then update the .env file, the new value is still shown. This is really handy in production because it allows you to have different configs and still use the same build across different evironments. You also can push this even further and create realtime configs using some timers and a module you can actually `update configs` in realtime while the server container is still running! (turn features on & off, update themes, hours of operation,.. without rebuilding)
+- When Nuxt starts up, it will take both of `publicRuntimeConfig` and `privateRuntimeConfig` objects and combine theme. Once for browsers (using only public) and once fore the server (using both public and private). That means `privateRuntimeConfig` is intended for SSR only. We can us it by `this.$config` or `context.$config`
+- If we build the app and then update the .env file, the new value is still shown. This is really handy in production because it allows you to have different configs and still use the same build across different evironments. 
+- You also can push this even further and create realtime configs using some timers and a module you can actually **update configs** in realtime while the server container is still running! (turn features on & off, update themes, hours of operation,.. without rebuilding)
+
+## Google Authentication 
+- [Google Sign-in Documentation](https://developers.google.com/identity/sign-in/web/sign-in)
+- [Google + oAuth 2 Documentation](https://developers.google.com/identity/protocols/oauth2)
+- Add oAuth 2:
+1. Go to [console](https://console.developers.google.com/). 
+2. Select `Credentials`, click `CREATE CREDENTIALS` -> `OAuth client. ID`.
+3. Now choose `Web application` type, input our app name.
+4. Add `http://localhost:3000` to `Authorized Javascript origins`. We'll add new domain when deploy the app.
+5. Note: in traditional oAuth 2, when we request an authorization token we'd pass a redirect url so that when the user is done logging in, Google would know where to send the user next. `Authirized redirect URIs` would make sure the redirect url passed is authorized. Since we'll be using Google Sign-in button, we don't need any `Redirect Urls`, it just creates a popup on its own.
+6. Add plugin to load `gapi` from (Google APIs)[https://developers.google.com/identity/sign-in/web/reference#gapiauth2initparams]. (`~/plugins/auth.client.js`)
+
+## [Server Middleware](https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-servermiddleware)
+- Use `serverMiddleware` to create a server-side firewall where sensitive API calls are protected and proxied to their destinations.
+- Whenever the sever gets hit, the browser will automatically pass the id token cookie in the request
+- `addServerMiddleware` will adds the handler to the end of the `serverMiddleware` array. We want to make sure our `serverMiddleware` would run first by using hook [render:setupMiddleware](https://nuxtjs.org/docs/2.x/internals-glossary/internals-renderer#hooks)
+- [Google API Client](https://developers.google.com/identity/sign-in/web/backend-auth#using-a-google-api-client-library)
+### Create user via serverMiddleware
+- Go to `algolia` app -> `API Keys` -> `All API Keys` -> `New API Key` -> In ACL box add option `addObject` (keep `search` option which is default) -> `Create` -> add to `privateRuntimeConfig` in `nuxt.config.js`.
+1. plugin `auth.client.js` load google gapi. When user successfully signed in, set token into cookie, then call`/api/user`
+2. `auth` is serverMiddleware for route `/api`. It get cookie from header, verify google token and return user signed in info
+3. `algolia` is serverMiddleware for route `/api/user`. It gets user info form req.identity which is set from serverMiddleware `auth`. Get user with that id from `Algolia`. If user doesn't exist, sends request to create user.
+
+r5OkePEczeRny3MdhElfmhRd
 ## Build Setup
 
 ```bash

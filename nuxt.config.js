@@ -23,7 +23,8 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/maps.client',
-    '~/plugins/dataApi'
+    '~/plugins/dataApi',
+    '~/plugins/auth.client'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -43,7 +44,9 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '~/modules/auth',
+    '~/modules/algolia'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -51,21 +54,25 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    postcss: {
-      preset: {
-        features: {
-          // Fixes: https://github.com/tailwindcss/tailwindcss/issues/1190#issuecomment-546621554
-          'focus-within-pseudo-class': false
-        }
-      }
-    },
     extractCSS: true,
     loaders: {
       limit: 0
     }
   },
   publicRuntimeConfig: {
+    auth: {
+      cookieName: 'idToken',
+      clientId: '511830555653-oirt8e6dh123fa0slroois257v6b0pdr.apps.googleusercontent.com'
+    },
+    algolia: {
+      appId: 'HD8L8P9R0Q',
+      key: 'c29bba919f0d7d322ff5b7ed630044ae'
+    }
   },
   privateRuntimeConfig: {
+    algolia: {
+      appId: 'HD8L8P9R0Q',
+      key: '7949878a382f3e1bb4f0e3d206b696c6'
+    }
   }
 }
