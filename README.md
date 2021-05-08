@@ -4,13 +4,18 @@ A fully functional AirBnb clone powered by Nuxt.js.
 
 This project also integrate with third party code from Google Maps, Algolia and Stripe
 Deep dive into some of the most ignored problems your app will face in production and perform root-cause analysis to find out what's really going on behind the scenes
-- Start with local mock data and build up to full REST API using NodeJS proxy for actions that require elevated privileges
+- Build REST API using NodeJS proxy for actions that require elevated privileges
 - Geo search page that shows properties in the area
-- Property page where user can se property details
+- Property page where user can see property details
 - Admin page for managing properties
 - Algolia for lighting fast Geo search and data storage
 - Stripe for payment
 - Cloudinary to upload assets and optimize images for mobile friendly and stays efficient
+
+## Drawback of SPA
+- The time it takes to render the first page and initialize the app is extensive
+- Many search engines cannot render js, though some can render js, it will result in indexing delay
+- Not good for social sharing. When you paste a link to your site in Discord, FB, Twitter,... a robot hits your site and fetches the sharing data to render. Those robots don't know how to render js or how to run your app. [Facebok check](https://developers.facebook.com/tools/debug)
 
 ## [head()](https://vue-meta.nuxtjs.org/api/)
 - To avoid any duplication when used in child components, please give a unique identifier with the hid key to the meta description. This way vue-meta will know that it has to [overwrite the default tag](https://nuxtjs.org/docs/2.x/features/meta-tags-seo#local-settings).
@@ -27,7 +32,8 @@ Deep dive into some of the most ignored problems your app will face in productio
 ## [Nuxt Hooks](https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-hooks)
 
 ## [Google api](https://console.cloud.google.com)
-- `defer` download script asynchronously then executed whenever it's ready. All scripts with `defer` are guaranteed to execute in the order they appear. Meanwhile `Nuxt` also uses `defer` on all of `Nuxt's javascript` and put it at bottom of the page. So if we use `defer` to load Google Maps in `<head>` the browser have to wait for the Google Maps to download before it could even start up `Nuxt` and hooks like created, mounted... It's not good for mobile or slow network. That's why we should use `async` here.
+-  All scripts with `defer` are guaranteed to execute in the order they appear. Meanwhile `Nuxt` also uses `defer` on all of `Nuxt's javascript` and put it at bottom of the page. So if we use `defer` to load Google Maps in `<head>` the browser have to wait for the Google Maps to download before it could even start up `Nuxt` and hooks like created, mounted... It's not good for mobile or slow network. That's why we should use `async` here.
+- Now that we use `async` to load google script. Remember to check that has been loaded or not because nuxt script may execute it before it's completely loaded if we call it in `created` or `mounted`
 - When using third party libraries not supported SSR natively, `script` in `head()` is being appended to the page as many times as the component was loaded. Remember to use `skip` in head.
 - [Place autocomplete](https://developers.google.com/maps/documentation/javascript/places-autocomplete)
 - [Place types](https://developers.google.com/maps/documentation/places/web-service/supported_types)
@@ -60,12 +66,13 @@ Deep dive into some of the most ignored problems your app will face in productio
 ## Google Authentication 
 - [Google Sign-in Documentation](https://developers.google.com/identity/sign-in/web/sign-in)
 - [Google + oAuth 2 Documentation](https://developers.google.com/identity/protocols/oauth2)
+- [GoogleAuth.currentUser.listen(listener) Documentation](https://developers.google.com/identity/sign-in/web/reference#googleauthcurrentuserlistenlistener)
 - Add oAuth 2:
 1. Go to [console](https://console.developers.google.com/). 
 2. Select `Credentials`, click `CREATE CREDENTIALS` -> `OAuth client. ID`.
 3. Now choose `Web application` type, input our app name.
 4. Add `http://localhost:3000` to `Authorized Javascript origins`. We'll add new domain when deploy the app.
-5. Note: in traditional oAuth 2, when we request an authorization token we'd pass a redirect url so that when the user is done logging in, Google would know where to send the user next. `Authirized redirect URIs` would make sure the redirect url passed is authorized. Since we'll be using Google Sign-in button, we don't need any `Redirect Urls`, it just creates a popup on its own.
+5. Note: in traditional oAuth 2, when we request an authorization token we'd pass a redirect url so that when the user is done logging in, Google would know where to send the user next. `Authorized redirect URIs` would make sure the redirect url passed is authorized. Since we'll be using Google Sign-in button, we don't need any `Redirect Urls`, it just creates a popup on its own.
 6. Add plugin to load `gapi` from (Google APIs)[https://developers.google.com/identity/sign-in/web/reference#gapiauth2initparams]. (`~/plugins/auth.client.js`)
 
 ## [Server Middleware](https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-servermiddleware)
@@ -78,6 +85,18 @@ Deep dive into some of the most ignored problems your app will face in productio
 1. plugin `auth.client.js` load google gapi. When user successfully signed in, set token into cookie, then call`/api/user`
 2. `auth` is serverMiddleware for route `/api`. It get cookie from header, verify google token and return user signed in info
 3. `algolia` is serverMiddleware for route `/api/user`. It gets user info form req.identity which is set from serverMiddleware `auth`. Get user with that id from `Algolia`. If user doesn't exist, sends request to create user.
+
+## Admin section
+- We don't need SSR for admin section. So we need to enable SPA mode for route `/admin`
+```js
+// modules/auth.js
+this.nuxt.hook('render:setupMiddleware', (app) =>{
+  app.use('/admin', (req, res, next) => {
+    res.spa = true
+    next()
+  })
+})
+```
 
 r5OkePEczeRny3MdhElfmhRd
 ## Build Setup

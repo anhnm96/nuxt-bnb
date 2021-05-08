@@ -43,6 +43,7 @@ export default {
     changed (event) {
       const place = event.detail
       if (!place.geometry) return
+
       this.$router.push({
         name: 'search',
         query: {
@@ -55,6 +56,3 @@ export default {
   }
 }
 </script>
-<style>
-
-</style>

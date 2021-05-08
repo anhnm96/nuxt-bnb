@@ -4,8 +4,17 @@ import { OAuth2Client } from 'google-auth-library'
 export default function () {
   const authConfig = this.options.publicRuntimeConfig.auth
 
+  // add this middleware first before nuxt's middlewares
   this.nuxt.hook('render:setupMiddleware', (app) => {
     app.use('/api', handler)
+  })
+
+  // enable spa mode for admin route
+  this.nuxt.hook('render:setupMiddleware', (app) => {
+    app.use('/admin', (req, res, next) => {
+      res.spa = true
+      next()
+    })
   })
 
   async function handler (req, res, next) {
@@ -14,7 +23,6 @@ export default function () {
     const ticket = await getUser(idToken)
     if (!ticket) return rejectHit(res)
 
-    console.log('wtf')
     req.identity = {
       id: ticket.sub,
       email: ticket.email,
