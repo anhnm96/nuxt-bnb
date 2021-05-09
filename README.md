@@ -103,6 +103,9 @@ this.nuxt.hook('render:setupMiddleware', (app) =>{
 - To add home reference to userId. In algolia, go to `indices/homes` -> facets -> in the `Attributes for faceting`, add `userId`
 - `nuxt/image` [module](https://image.nuxtjs.org/api/$img/)
 - cloudinary [crop](https://cloudinary.com/documentation/resizing_and_cropping)
+
+## Availability
+- In `homes` indices add facets `availability` to enable filter by availability
 r5OkePEczeRny3MdhElfmhRd
 ## Build Setup
 

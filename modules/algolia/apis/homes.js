@@ -17,6 +17,19 @@ export default (algoliaConfig) => {
     },
     create: async (homeId, payload) => {
       try {
+        // transform availilityRanges to array of sequential days
+        const availability = []
+        payload.availabilityRanges.forEach((range) => {
+          const start = new Date(range.start).getTime() / 1000
+          const end = new Date(range.end).getTime() / 1000
+          // 1 day = 86400 seconds
+          for (let day = start; day <= end; day += 86400) {
+            availability.push(day)
+          }
+        })
+
+        delete payload.availabilityRanges
+        payload.availability = availability
         return unWrap(await fetch(`https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/homes/${homeId}`, {
           headers,
           method: 'PUT',

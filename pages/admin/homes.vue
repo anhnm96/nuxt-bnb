@@ -38,6 +38,20 @@
       State: <input v-model="home.location.state" type="text" class="w-26"><br>
       Postal Code: <input v-model="home.location.postalCode" type="text" class="w-26"><br>
       Country: <input v-model="home.location.country" type="text" class="w-26"><br>
+      <date-picker
+        v-for="(range, index) in home.availabilityRanges"
+        :key="index"
+        v-model="home.availabilityRanges[index]"
+        is-range
+        timezone="UTC"
+        :model-config="{ timeAdjust: '00:00:00'}"
+      >
+        <template #default="{ inputValue, inputEvents}">
+          <input :value="inputValue.start" v-on="inputEvents.start">
+          to
+          <input :value="inputValue.end" v-on="inputEvents.end"><br>
+        </template>
+      </date-picker>
       <button class="px-4 py-2 border border-gray-400">
         Add
       </button>
@@ -72,7 +86,12 @@ export default {
           lat: '',
           lng: ''
         },
-        images: []
+        images: [],
+        availabilityRanges: [{
+          start: '', end: ''
+        }, {
+          start: '', end: ''
+        }]
       }
     }
   },
