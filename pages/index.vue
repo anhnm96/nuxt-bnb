@@ -9,11 +9,10 @@
 </template>
 
 <script>
-import homes from '~/data/homes.json'
 export default {
-  data () {
+  async asyncData ({ $dataApi }) {
     return {
-      homes: homes.slice(0, 3)
+      homes: (await $dataApi.getHomes()).json.hits
     }
   },
   head () {

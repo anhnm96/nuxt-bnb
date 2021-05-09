@@ -26,13 +26,13 @@ export default function (context, inject) {
     waiting = []
   }
 
-  function makeAutoComplete (input) {
+  function makeAutoComplete (input, types = ['(cities)']) {
     if (!isLoaded) {
       waiting.push({ fn: makeAutoComplete, arguments })
       return
     }
     const autoComplete = new window.google.maps.places.Autocomplete(input, {
-      types: ['(cities)']
+      types
     })
     autoComplete.addListener('place_changed', () => {
       const place = autoComplete.getPlace()

@@ -48,7 +48,10 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '~/modules/auth',
-    '~/modules/algolia'
+    '~/modules/algolia',
+    '~/modules/cloudinary',
+    '@nuxtjs/cloudinary',
+    '@nuxt/image'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -61,6 +64,14 @@ export default {
       limit: 0
     }
   },
+  cloudinary: {
+    cloudName: 'dfobe29zv'
+  },
+  image: {
+    cloudinary: {
+      baseURL: 'https://res.cloudinary.com/dfobe29zv/image/upload/'
+    }
+  },
   publicRuntimeConfig: {
     auth: {
       cookieName: 'idToken',
@@ -69,12 +80,18 @@ export default {
     algolia: {
       appId: 'HD8L8P9R0Q',
       key: 'c29bba919f0d7d322ff5b7ed630044ae'
+    },
+    cloudinary: {
+      apiKey: '245763438982358'
     }
   },
   privateRuntimeConfig: {
     algolia: {
       appId: 'HD8L8P9R0Q',
       key: '7949878a382f3e1bb4f0e3d206b696c6'
+    },
+    cloudinary: {
+      apiSecret: '00_27FqCBjHQsnVKxU5Ow_G7GK0'
     }
   }
 }

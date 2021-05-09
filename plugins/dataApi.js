@@ -5,7 +5,7 @@ export default function ({ $config }, inject) {
     'X-Algolia-API-Key': $config.algolia.key,
     'X-Algolia-Application-Id': $config.algolia.appId
   }
-  inject('dataApi', { getHome, getReviewsByHomeId, getUserByHomeId, getHomeByLocation })
+  inject('dataApi', { getHome, getReviewsByHomeId, getUserByHomeId, getHomeByLocation, getHomes })
 
   async function getHome (homeId) {
     try {
@@ -46,7 +46,7 @@ export default function ({ $config }, inject) {
     }
   }
 
-  async function getHomeByLocation (lat, lng, radiusInMeters = 1500) {
+  async function getHomeByLocation (lat, lng, radiusInMeters = 1500 * 15) {
     try {
       return unWrap(await fetch(`https://${$config.algolia.appId}-dsn.algolia.net/1/indexes/homes/query`, {
         headers,
@@ -55,6 +55,21 @@ export default function ({ $config }, inject) {
           aroundLatLng: `${lat},${lng}`,
           aroundRadius: radiusInMeters,
           hitsPerPage: 10,
+          attributesToHighlight: []
+        })
+      }))
+    } catch (error) {
+      return getErrorResponse(error)
+    }
+  }
+
+  async function getHomes () {
+    try {
+      return unWrap(await fetch(`https://${$config.algolia.appId}-dsn.algolia.net/1/indexes/homes/query`, {
+        headers,
+        method: 'POST',
+        body: JSON.stringify({
+          hitsPerPage: 17,
           attributesToHighlight: []
         })
       }))

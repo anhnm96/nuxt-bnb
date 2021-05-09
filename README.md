@@ -81,7 +81,7 @@ Deep dive into some of the most ignored problems your app will face in productio
 - `addServerMiddleware` will adds the handler to the end of the `serverMiddleware` array. We want to make sure our `serverMiddleware` would run first by using hook [render:setupMiddleware](https://nuxtjs.org/docs/2.x/internals-glossary/internals-renderer#hooks)
 - [Google API Client](https://developers.google.com/identity/sign-in/web/backend-auth#using-a-google-api-client-library)
 ### Create user via serverMiddleware
-- Go to `algolia` app -> `API Keys` -> `All API Keys` -> `New API Key` -> In ACL box add option `addObject` (keep `search` option which is default) -> `Create` -> add to `privateRuntimeConfig` in `nuxt.config.js`.
+- Go to `algolia` app -> `API Keys` -> `All API Keys` -> `New API Key` -> In ACL box add option `addObject` and `deleteObject` (keep `search` option which is default) -> `Create` -> add to `privateRuntimeConfig` in `nuxt.config.js`.
 1. plugin `auth.client.js` load google gapi. When user successfully signed in, set token into cookie, then call`/api/user`
 2. `auth` is serverMiddleware for route `/api`. It get cookie from header, verify google token and return user signed in info
 3. `algolia` is serverMiddleware for route `/api/user`. It gets user info form req.identity which is set from serverMiddleware `auth`. Get user with that id from `Algolia`. If user doesn't exist, sends request to create user.
@@ -97,7 +97,12 @@ this.nuxt.hook('render:setupMiddleware', (app) =>{
   })
 })
 ```
-
+## Cloudinary
+- Generating authentication signatures [doc](https://cloudinary.com/documentation/upload_images#generating_authentication_signatures)
+- Nodejs [crypto](https://nodejs.org/api/all.html#crypto_crypto_createhash_algorithm_options)
+- To add home reference to userId. In algolia, go to `indices/homes` -> facets -> in the `Attributes for faceting`, add `userId`
+- `nuxt/image` [module](https://image.nuxtjs.org/api/$img/)
+- cloudinary [crop](https://cloudinary.com/documentation/resizing_and_cropping)
 r5OkePEczeRny3MdhElfmhRd
 ## Build Setup
 
